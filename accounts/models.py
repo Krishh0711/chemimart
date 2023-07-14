@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.managers import UserManager
 from django.contrib.auth.models import AbstractBaseUser
+from common.models import AbstractTimeStampModel
 
 class User(AbstractBaseUser):
     mobile_number = models.CharField(max_length=10, unique=True)
@@ -14,3 +15,10 @@ class User(AbstractBaseUser):
 
     def verify_otp(self, otp):
         return True
+
+
+class SellerAccount(AbstractTimeStampModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.mobile_number
