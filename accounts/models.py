@@ -22,3 +22,25 @@ class SellerAccount(AbstractTimeStampModel):
 
     def __str__(self):
         return self.user.mobile_number
+
+
+class CustomerAccount(AbstractTimeStampModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    address = models.TextField()
+
+
+    def __str__(self):
+        return self.user.mobile_number
+    
+    
+    @classmethod
+    def get_or_create_customer(cls, mobile_number, address):
+        user, is_created = User.objects.get_or_create(mobile_number=mobile_number)
+        if user.is_buyer:
+            return cls.objects.get(user=user)
+        user.is_buyer = True
+        user.save()
+        return cls.objects.create(user=user, address=address)
+        
+
+        

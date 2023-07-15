@@ -4,7 +4,7 @@ from stores.models import Store, Product
 from decimal import Decimal
 
 
-class StoreSerializer(serializers.ModelSerializer):
+class StoreListCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store
         fields = ['id', 'seller_account', 'name', 'address', 'store_link']
@@ -14,7 +14,7 @@ class StoreSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     description = serializers.CharField(required=False)
-    store = serializers.PrimaryKeyRelatedField(queryset=Store.objects.all(), required=False)
+    store = serializers.PrimaryKeyRelatedField(queryset=Store.objects.all(), required=False, write_only=True)
     
     class Meta:
         model = Product
@@ -39,3 +39,11 @@ class ProductSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['store'] = self.context['store']
         return super().create(validated_data)
+
+
+
+class StoreDetailsSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Store
+        fields = ['id', 'name', 'address']
