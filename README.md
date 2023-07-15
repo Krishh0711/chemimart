@@ -48,3 +48,8 @@ Follow the instructions below to set up the project locally on your machine.
    python manage.py runserver
 
 3. Access the application in your web browser at http://localhost:8000/
+
+
+### API Details
+
+   For API details refer [this](https://docs.google.com/spreadsheets/d/1bNBefw0jzZ7WwusXcUxZKMVZIi4uT-dXK_IpuYUmIP4/edit?usp=sharing) document.
