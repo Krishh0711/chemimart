@@ -33,4 +33,5 @@ class Product(AbstractTimeStampModel):
     
     @property
     def discount(self):
-        return ((self.mrp-self.sale_price)/self.mrp)*100
+        discount_percentage = ((self.mrp - self.sale_price) / self.mrp) * 100
+        return f"{discount_percentage:.2f}%"
