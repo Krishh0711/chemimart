@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from stores.models import Store, Product
-from stores.serializers import StoreSerializer, ProductSerializer
+from stores.serializers import StoreListCreateSerializer, ProductSerializer, StoreDetailsSerializer
 from rest_framework.permissions import IsAuthenticated
 from accounts.permissions import IsSeller
 from accounts.models import SellerAccount
@@ -24,7 +24,7 @@ class StoreListCreateView(APIView):
         """
         seller_account = SellerAccount.objects.get(user=request.user)
         queryset = Store.objects.filter(seller_account=seller_account)
-        serializer = StoreSerializer(queryset, many=True)
+        serializer = StoreListCreateSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def post(self, request):
@@ -35,7 +35,7 @@ class StoreListCreateView(APIView):
             seller_account = SellerAccount.objects.get(user=request.user)
         except SellerAccount.DoesNotExist:
             return Response({'error': 'Seller account not found.'}, status=404)
-        serializer = StoreSerializer(data={"seller_account": seller_account.id, **request.data})
+        serializer = StoreListCreateSerializer(data={"seller_account": seller_account.id, **request.data})
         if serializer.is_valid():
             store = serializer.save()
             response_data = {
@@ -82,6 +82,15 @@ class ProductListCreateView(APIView):
         return Response(serializer.errors, status=400)
 
 
-
-
-
+class StoreDetailsAPIView(APIView):
+    """
+    API view for retrieving store details based on the store link.
+    """
+    def get(self, request, **kwargs):
+        store_link = kwargs.get('store_link', '')
+        try:
+            store = Store.objects.get(store_link=store_link)
+            serializer = StoreDetailsSerializer(store)
+            return Response(serializer.data)
+        except Store.DoesNotExist:
+            return Response({'error': 'Store not found'}, status=404)
