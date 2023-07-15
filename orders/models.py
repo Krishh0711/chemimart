@@ -12,10 +12,43 @@ class Cart(AbstractTimeStampModel):
     is_active = models.BooleanField(default=True)
 
 
+    @classmethod
+    def get_or_create_cart(cls, session_id):
+        return cls.objects.get_or_create(session_id=session_id, is_active=True)
+
+
+
 class CartItems(AbstractTimeStampModel):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+
+    
+    @classmethod
+    def add_to_cart(cls, cart, product_id, quantity):
+        cart_item, is_created = cls.objects.get_or_create(cart=cart, product_id=product_id)
+        if is_created:
+            cart_item.quantity = quantity
+        else:
+            cart_item.quantity += quantity
+        cart_item.save()
+
+    @classmethod
+    def remove_from_cart(cls, cart, product_id, quantity):
+        try:
+            cart_item = cls.objects.get(cart=cart, product_id=product_id)
+            if cart_item.quantity <= quantity:
+                cart_item.delete()
+            else:
+                cart_item.quantity -= quantity
+                cart_item.save()
+        except CartItems.DoesNotExist:
+            pass
+
+    @classmethod
+    def get_all_items_of_cart(cls, cart):
+        cart_items_qs = cls.objects.filter(cart=cart).values('product__id', 'product__name', 'quantity', 'product__store__store_link')
+        return list(cart_items_qs)
 
 
 class Order(AbstractTimeStampModel):
