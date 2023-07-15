@@ -35,3 +35,5 @@ class Product(AbstractTimeStampModel):
     def discount(self):
         discount_percentage = ((self.mrp - self.sale_price) / self.mrp) * 100
         return f"{discount_percentage:.2f}%"
+
+

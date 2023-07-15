@@ -1,5 +1,5 @@
 import uuid
-from django.db import models
+from django.db import models, transaction
 from common.models import AbstractTimeStampModel
 from accounts.models import CustomerAccount
 from stores.models import Product
@@ -15,6 +15,13 @@ class Cart(AbstractTimeStampModel):
     @classmethod
     def get_or_create_cart(cls, session_id):
         return cls.objects.get_or_create(session_id=session_id, is_active=True)
+
+    @classmethod
+    def get_cart_object_by_user_session(cls, session_id):
+        try:
+            return cls.objects.get(session_id=session_id, is_active=True)
+        except Cart.DoesNotExist:
+            return None
 
 
 
@@ -78,6 +85,35 @@ class OrderItem(AbstractTimeStampModel):
     quantity = models.PositiveIntegerField(default=1)   
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     order_item_status = models.IntegerField(choices=ORDER_ITEM_STATUS_CHOICES, default=ORDER_ITEM_PROCESSING)
+
+
+    @classmethod
+    def get_order_item_detail_by_order_id(cls, order_id):
+        order_items_qs = cls.objects.filter(order__order_id=order_id).values('product__name', 'quantity', 'price', 'order_item_status')
+        return list(order_items_qs)
+
+
+    @classmethod
+    def place_order(cls, cart, phone_number, address):
+        with transaction.atomic():
+            customer = CustomerAccount.get_or_create_customer(phone_number, address)
+            order = Order.objects.create(address=address, customer=customer)
+            cart.customer = customer
+            cart.is_active = False
+            cart.save()
+            cart_items = CartItems.objects.filter(cart=cart)
+            order_items_list = []
+            for item in cart_items:
+                order_items_list.append(OrderItem(order=order, product=item.product, quantity=item.quantity, price=item.product.sale_price))
+            cls.objects.bulk_create(order_items_list)
+        return order.order_id
+
+
+
+        
+
+
+
 
 
 
