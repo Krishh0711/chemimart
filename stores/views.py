@@ -94,3 +94,15 @@ class StoreDetailsAPIView(APIView):
             return Response(serializer.data)
         except Store.DoesNotExist:
             return Response({'error': 'Store not found'}, status=404)
+
+
+class AvailableProductListView(APIView):
+    """
+    API view for retrieving available products in stores based on the store link.
+    """
+    def get(self, request, **kwargs):
+        store_link = kwargs.get('store_link', '')
+        queryset = Product.objects.filter(store__store_link=store_link, is_available=True).order_by('name')
+        serializer = ProductSerializer(queryset, many=True)
+        return Response(serializer.data)
+        

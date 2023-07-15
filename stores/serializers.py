@@ -14,7 +14,7 @@ class StoreListCreateSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     description = serializers.CharField(required=False)
-    store = serializers.PrimaryKeyRelatedField(queryset=Store.objects.all(), required=False)
+    store = serializers.PrimaryKeyRelatedField(queryset=Store.objects.all(), required=False, write_only=True)
     
     class Meta:
         model = Product
