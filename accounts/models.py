@@ -35,6 +35,15 @@ class CustomerAccount(AbstractTimeStampModel):
     
     @classmethod
     def get_or_create_customer(cls, mobile_number, address):
+        """
+        Get or create a customer with the given mobile number and address.
+        Args:
+            mobile_number (str): The mobile number for the customer.
+            address (str): The address for the customer.
+
+        Returns:
+            Customer: The customer object associated with the user.
+        """
         user, is_created = User.objects.get_or_create(mobile_number=mobile_number)
         if user.is_buyer:
             return cls.objects.get(user=user)

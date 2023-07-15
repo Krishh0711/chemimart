@@ -2,10 +2,17 @@ from rest_framework.views import APIView
 from orders.models import Cart, CartItems, OrderItem
 from orders.decorators import valid_product_id_and_quantity_required
 from rest_framework.response import Response
-from rest_framework.status import HTTP_400_BAD_REQUEST
+from rest_framework import status
 from common.utils import validate_phone_number_and_otp
 
 class UpdateCartItemsView(APIView):
+    """
+    API view for updating (adding/removing) cart items.
+
+    This view handles the POST requests to update the cart items. If the provided quantity is greater than 0,
+    it adds the quantity to the existing quantity of the same item in the cart. If the quantity is less than or
+    equal to 0, it subtracts the absolute value of the quantity from the existing quantity of the same item.
+    """
     
     @valid_product_id_and_quantity_required
     def post(self, request, *args, **kwargs):
@@ -23,35 +30,38 @@ class UpdateCartItemsView(APIView):
             response_data = {
                 "cart_items" : CartItems.get_all_items_of_cart(cart)
             }
-            return Response(response_data, status=201)
+            return Response(response_data, status=status.HTTP_201_CREATED)
         except Exception as e:
             # TODO: log error for internal tracking
-            return Response({'error': "Something went wrong. Please try again later"}, status=500)
+            return Response({'error': "Something went wrong. Please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class PlaceOrderView(APIView):
+    """
+    API view for placing an order.
+    """
     
     def post(self, request, *args, **kwargs):
         phone_number = request.data.get('phone_number', None)
         otp = request.data.get('otp', None)
         if not validate_phone_number_and_otp(phone_number, otp):
-            return Response({'error': "Invalid phone number or OTP."}, status=HTTP_400_BAD_REQUEST)
+            return Response({'error': "Invalid phone number or OTP."}, status=status.HTTP_400_BAD_REQUEST)
         if not request.session.session_key:
             request.session.save()
         try:
             address = str(request.data.get('otp', None))
             cart = Cart.get_cart_object_by_user_session(request.session.session_key)
             if not cart:
-                return Response({'error': "Cart is empty. Please add a product to the order."}, status=HTTP_400_BAD_REQUEST)
+                return Response({'error': "Cart is empty. Please add a product to the order."}, status=status.HTTP_400_BAD_REQUEST)
             cart_items = CartItems.objects.filter(cart=cart)
             if cart_items.exists():
                 order_id = OrderItem.place_order(cart, phone_number, address)
-                return Response({"order_id": order_id}, status=201)
+                return Response({"order_id": order_id}, status=status.HTTP_201_CREATED)
             else:
-                return Response({'error': "Cart is empty. Please add a product to the order"}, status=HTTP_400_BAD_REQUEST)
+                return Response({'error': "Cart is empty. Please add a product to the order"}, status=status.status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             # TODO: log error for internal tracking
-            return Response({'error': "Something went wrong. Please try again later"}, status=500)
+            return Response({'error': "Something went wrong. Please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # INFO: made this just for testing

@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from accounts.permissions import IsSeller
 from accounts.models import SellerAccount
 from stores.decorators import valid_store_id_required
+from rest_framework import status
 
 class StoreListCreateView(APIView):
     """
@@ -33,7 +34,7 @@ class StoreListCreateView(APIView):
         try:
             seller_account = SellerAccount.objects.get(user=request.user)
         except SellerAccount.DoesNotExist:
-            return Response({'error': 'Seller account not found.'}, status=404)
+            return Response({'error': 'Seller account not found.'}, status=status.HTTP_404_NOT_FOUND)
         serializer = StoreListCreateSerializer(data={"seller_account": seller_account.id, **request.data})
         if serializer.is_valid():
             store = serializer.save()
@@ -41,8 +42,8 @@ class StoreListCreateView(APIView):
                 'store_id': store.id,
                 'store_link': store.store_link
             }
-            return Response(response_data, status=201)
-        return Response(serializer.errors, status=400)
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProductListCreateView(APIView):
@@ -77,8 +78,8 @@ class ProductListCreateView(APIView):
                 'name': product.name,
                 'image': product.image.url
             }
-            return Response(response_data, status=201)
-        return Response(serializer.errors, status=400)
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class StoreDetailsAPIView(APIView):
@@ -92,7 +93,7 @@ class StoreDetailsAPIView(APIView):
             serializer = StoreDetailsSerializer(store)
             return Response(serializer.data)
         except Store.DoesNotExist:
-            return Response({'error': 'Store not found'}, status=404)
+            return Response({'error': 'Store not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class AvailableProductListView(APIView):

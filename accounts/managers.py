@@ -2,6 +2,9 @@ from django.contrib.auth.models import BaseUserManager
 
 
 class UserManager(BaseUserManager):
+    """
+    Custom user manager for creating and managing users.
+    """
     def create_user(self, mobile_number, otp, **extra_fields):
         user = self.model(mobile_number=mobile_number, otp=otp, **extra_fields)
         user.set_unusable_password()

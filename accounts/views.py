@@ -6,6 +6,9 @@ from accounts.serializers import SellerAccountLoginSerializer
 
 
 class SellerAccountLoginView(APIView):
+    """
+    API view for seller account login.
+    """
     def post(self, request):
         serializer = SellerAccountLoginSerializer(data=request.data)
         if serializer.is_valid():
