@@ -60,7 +60,7 @@ class ProductListCreateView(APIView):
         """
         Retrieve all products for the logged in seller's store.
         """
-        queryset = Product.objects.filter(store=request.store.id)
+        queryset = Product.objects.filter(store_id=request.store.id)
         serializer = ProductSerializer(queryset, many=True)
         return Response(serializer.data)
     
