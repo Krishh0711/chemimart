@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -61,7 +60,7 @@ class ProductListCreateView(APIView):
         """
         Retrieve all products for the logged in seller's store.
         """
-        queryset = Product.objects.filter(store=request.store)
+        queryset = Product.objects.filter(store=request.store.id)
         serializer = ProductSerializer(queryset, many=True)
         return Response(serializer.data)
     
