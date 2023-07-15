@@ -1,6 +1,8 @@
 from accounts.models import SellerAccount
 from stores.models import Store
 from rest_framework.response import Response
+from rest_framework import status
+
 
 def valid_store_id_required(func):
     """
@@ -12,6 +14,6 @@ def valid_store_id_required(func):
             store = Store.objects.get(id=store_id, seller_account__user_id=request.user.id)
             request.store = store  
         except Store.DoesNotExist:
-            return Response({'error':"Invalid store id"}, status=400)
+            return Response({'error':"Invalid store id"}, status=status.HTTP_400_BAD_REQUEST)
         return func(view, request, *args, **kwargs)
     return wrapper
