@@ -22,3 +22,12 @@ class SellerAccount(AbstractTimeStampModel):
 
     def __str__(self):
         return self.user.mobile_number
+
+
+class CustomerAccount(AbstractTimeStampModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    address = models.TextField()
+
+
+    def __str__(self):
+        return self.user.mobile_number
