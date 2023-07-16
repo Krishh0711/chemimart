@@ -53,3 +53,7 @@ Follow the instructions below to set up the project locally on your machine.
 ### API Details
 
    For API details refer [this](https://docs.google.com/spreadsheets/d/1bNBefw0jzZ7WwusXcUxZKMVZIi4uT-dXK_IpuYUmIP4/edit?usp=sharing) document.
+
+### High-Level Design 
+
+   Have discussed high-level design of critical features [here](https://docs.google.com/document/d/1E2u4KNTDXW6OIkyRKCUqQqZ3_6Ic9gQJOQavNCJROso/edit?usp=sharing)
