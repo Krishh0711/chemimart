@@ -8,3 +8,6 @@ ORDER_ITEM_PROCESSING = 1
 ORDER_ITEM_SHIPPED = 2
 ORDER_ITEM_DELIVERED = 3
 ORDER_ITEM_CANCELLED = 4
+
+# Error messages
+CART_EMPTY_ERROR_MESSAGE = "Cart is empty. Please add a product to the order."
