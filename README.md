@@ -37,17 +37,25 @@ Follow the instructions below to set up the project locally on your machine.
 
 ### Running Project
 
-1. Apply database migrations:
+1. Create media/product_images folder to upload product images. 
+
+   ```shell
+   mkdir media # Create a media directory
+   cd media    # Navigate to the media directory
+   mkdir product_images # Create a product_images directory
+   cd ../..   # Navigate back to the project root directory
+
+2. Apply database migrations:
 
    ```shell
    python manage.py migrate
 
-2. Start the development server:
+3. Start the development server:
 
    ```shell
    python manage.py runserver
 
-3. Access the application in your web browser at http://localhost:8000/
+4. Access the application in your web browser at http://localhost:8000/
 
 
 ### API Details
