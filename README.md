@@ -17,7 +17,7 @@ Follow the instructions below to set up the project locally on your machine.
 1. Clone the repository to your local machine:
 
    ```shell
-   https://github.com/Krishh0711/chemimart.git
+   git clone https://github.com/Krishh0711/chemimart.git
 
 2. Navigate to the project directory:
    
