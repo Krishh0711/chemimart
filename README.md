@@ -27,7 +27,7 @@ Follow the instructions below to set up the project locally on your machine.
 3. Create and activate a virtual environment (optional, but recommended):
 
    ```shell
-   python -m venv env         # Create a virtual environment
+   python3 -m venv env         # Create a virtual environment
    source env/bin/activate   # Activate the virtual environment
 
 4. Install project dependencies from the requirements.txt file:
@@ -43,7 +43,7 @@ Follow the instructions below to set up the project locally on your machine.
    mkdir media # Create a media directory
    cd media    # Navigate to the media directory
    mkdir product_images # Create a product_images directory
-   cd ../..   # Navigate back to the project root directory
+   cd ..   # Navigate back to the project root directory
 
 2. Apply database migrations:
 
