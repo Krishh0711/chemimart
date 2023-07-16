@@ -1,6 +1,6 @@
 # Chemimart Project
 
-This is a Chemimart Platform That Enables Businesses to set up and Run an Online Store
+This is a ChemiMart Platform that enables businesses to set up and run an online Store
 
 ## Setup
 
