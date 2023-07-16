@@ -4,6 +4,8 @@ from orders.decorators import valid_product_id_and_quantity_required
 from rest_framework.response import Response
 from rest_framework import status
 from common.utils import validate_phone_number_and_otp
+from common.constants import INTERNAL_SERVER_ERROR_MESSAGE
+from orders.constants import CART_EMPTY_ERROR_MESSAGE
 
 class UpdateCartItemsView(APIView):
     """
@@ -33,7 +35,7 @@ class UpdateCartItemsView(APIView):
             return Response(response_data, status=status.HTTP_201_CREATED)
         except Exception as e:
             # TODO: log error for internal tracking
-            return Response({'error': "Something went wrong. Please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': INTERNAL_SERVER_ERROR_MESSAGE}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class PlaceOrderView(APIView):
@@ -49,19 +51,19 @@ class PlaceOrderView(APIView):
         if not request.session.session_key:
             request.session.save()
         try:
-            address = str(request.data.get('otp', None))
+            address = str(request.data.get('address', None))
             cart = Cart.get_cart_object_by_user_session(request.session.session_key)
             if not cart:
-                return Response({'error': "Cart is empty. Please add a product to the order."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': CART_EMPTY_ERROR_MESSAGE}, status=status.HTTP_400_BAD_REQUEST)
             cart_items = CartItems.objects.filter(cart=cart)
             if cart_items.exists():
                 order_id = OrderItem.place_order(cart, phone_number, address)
                 return Response({"order_id": order_id}, status=status.HTTP_201_CREATED)
             else:
-                return Response({'error': "Cart is empty. Please add a product to the order"}, status=status.status.HTTP_400_BAD_REQUEST)
+                return Response({'error': CART_EMPTY_ERROR_MESSAGE}, status=status.status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             # TODO: log error for internal tracking
-            return Response({'error': "Something went wrong. Please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': INTERNAL_SERVER_ERROR_MESSAGE}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # INFO: made this just for testing
