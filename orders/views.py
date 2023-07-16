@@ -48,10 +48,12 @@ class PlaceOrderView(APIView):
         otp = request.data.get('otp', None)
         if not validate_phone_number_and_otp(phone_number, otp):
             return Response({'error': "Invalid phone number or OTP."}, status=status.HTTP_400_BAD_REQUEST)
+        address = request.data.get('address', None)
+        if not address or not isinstance(address, str):
+            return Response({'error': "Please provide valid address"}, status=status.HTTP_400_BAD_REQUEST)
         if not request.session.session_key:
             request.session.save()
         try:
-            address = str(request.data.get('address', None))
             cart = Cart.get_cart_object_by_user_session(request.session.session_key)
             if not cart:
                 return Response({'error': CART_EMPTY_ERROR_MESSAGE}, status=status.HTTP_400_BAD_REQUEST)
